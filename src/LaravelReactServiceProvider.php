@@ -27,7 +27,9 @@ class LaravelReactServiceProvider extends PackageServiceProvider
     public function packageBooted()
     {
         $this->publishes([
-            __DIR__ . '/../publishable/Controllers/HomeController.php' => app_path('Http/Controllers/HomeController.php'),
+            __DIR__ . '/../publishable/app/Http/Controllers/HomeController.php' => app_path('Http/Controllers/HomeController.php'),
+            __DIR__ . '/../publishable/routes/web.php' => base_path('routes/web.php'),
+            __DIR__ . '/../publishable/resources/views/home.blade.php' => base_path('resources/views/home.blade.php'),
         ]);
     }
 }
