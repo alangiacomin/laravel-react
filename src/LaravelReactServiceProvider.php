@@ -26,12 +26,28 @@ class LaravelReactServiceProvider extends PackageServiceProvider
 
     public function packageBooted()
     {
-        $this->publishes([
-            __DIR__ . '/../publishable/app/Http/Controllers/HomeController.php' => app_path('Http/Controllers/HomeController.php'),
-            __DIR__ . '/../publishable/routes/web.php' => base_path('routes/web.php'),
-            __DIR__ . '/../publishable/resources/views/home.blade.php' => base_path('resources/views/home.blade.php'),
-            __DIR__ . '/../publishable/package.json' => base_path('package.json'),
-            __DIR__ . '/../publishable/webpack.mix.js' => base_path('webpack.mix.js'),
-        ]);
+        $this->publishes($this->publishableItems());
+    }
+
+    private function publishableItems(string $dir = null)
+    {
+        $publishableRoot = __DIR__ . '/../publishable';
+
+        if (!isset($dir)) {
+            $dir = $publishableRoot;
+        }
+
+        $list = [];
+        foreach (scandir($dir) as $entry) {
+            if (is_dir($dir . "/" . $entry)) {
+                if ($entry != "." && $entry != "..") {
+                    $list = array_merge($list, $this->publishableItems($dir . "/" . $entry));
+                }
+            } else {
+                $list["$dir/$entry"] = base_path(str_replace("$publishableRoot/", "", "$dir/$entry"));
+            }
+        }
+
+        return $list;
     }
 }
